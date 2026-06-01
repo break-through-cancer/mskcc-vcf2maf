@@ -1,0 +1,17 @@
+{
+  "form": {
+    "type": "object",
+    "properties": {
+      "vcf": {
+        "title": "Input VCF file",
+        "description": "Variant Call Format file",
+        "type": "string",
+        "multiple": false,
+        "pathType": "dataset",
+        "file": "**/*"
+      }
+    },
+    "required": ["vcf"]
+  },
+  "ui": {}
+}
