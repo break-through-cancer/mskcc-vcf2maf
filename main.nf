@@ -1,5 +1,6 @@
 nextflow.enable.dsl=2
-params.vcf = null
+if (!params.containsKey('vcf'))
+    params.vcf = null
 params.outdir = "vcf2maf_out"
 
 params.vep_path = "/opt/vep"
@@ -37,7 +38,7 @@ process VCF2MAF {
 }
 
 workflow {
-    println "DEBUG params.vcf = ${params.vcf}"
+    println "params.vcf = ${params.vcf}"
     vcf_ch = Channel.fromPath(params.vcf, checkIfExists: true)
     VCF2MAF(vcf_ch)
 }
