@@ -1,6 +1,5 @@
 nextflow.enable.dsl=2
 
-params.vcf = null
 params.outdir = "vcf2maf_out"
 
 params.vep_path = "/opt/vep"
