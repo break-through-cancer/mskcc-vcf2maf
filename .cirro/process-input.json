@@ -2,5 +2,5 @@
     "read_from_cache": true,
     "write_to_cache": true,
     "outdir": "$.params.dataset.s3|/data/",
-    "input_vcf": "$.params.input_vcf"
+    "input_vcf": "$.params.dataset.paramJson.input_vcf"
  }
