@@ -2,9 +2,6 @@ nextflow.enable.dsl=2
 
 params.outdir = "vcf2maf_out"
 
-params.vep_path = "/opt/vep"
-params.vep_data = "/root/.vep"
-
 process VCF2MAF {
     tag "${vcf.simpleName}"
 
@@ -34,8 +31,6 @@ process VCF2MAF {
     VCF2MAF=\$(find / -name vcf2maf.pl 2>/dev/null | head -n 1)
 
     echo "Using vcf2maf: \$VCF2MAF"
-    echo "Using VEP path: ${params.vep_path}"
-    echo "Using VEP data: ${params.vep_data}"
 
     if [ -z "\$VCF2MAF" ]; then
         echo "ERROR: Could not find vcf2maf.pl inside container"
@@ -45,9 +40,7 @@ process VCF2MAF {
 
     perl "\$VCF2MAF" \\
         --input-vcf "${vcf}" \\
-        --output-maf "${vcf.simpleName}.maf" \\
-        --vep-path "${params.vep_path}" \\
-        --vep-data "${params.vep_data}"
+        --output-maf "${vcf.simpleName}.maf"
     """
 }
 
