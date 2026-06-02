@@ -1,7 +1,8 @@
 nextflow.enable.dsl=2
 
 params.outdir = "vcf2maf_out"
-
+params.vep_path = "/opt/vep"
+params.vep_data = "/root/.vep"
 process VCF2MAF {
     tag "${vcf.simpleName}"
 
@@ -38,9 +39,11 @@ process VCF2MAF {
         exit 1
     fi
 
-    perl "\$VCF2MAF" \\
-        --input-vcf "${vcf}" \\
-        --output-maf "${vcf.simpleName}.maf"
+    perl "$VCF2MAF" \
+        --input-vcf "${vcf}" \
+        --output-maf "${vcf.simpleName}.maf" \
+        --vep-path "${params.vep_path}" \
+        --vep-data "${params.vep_data}"
     """
 }
 
