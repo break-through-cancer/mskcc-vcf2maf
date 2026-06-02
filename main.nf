@@ -1,6 +1,6 @@
 nextflow.enable.dsl=2
-if (!params.containsKey('vcf'))
-    params.vcf = null
+if (!params.containsKey('input_vcf'))
+    params.input_vcf = null
 params.outdir = "vcf2maf_out"
 
 params.vep_path = "/opt/vep"
@@ -30,15 +30,15 @@ process VCF2MAF {
     echo "Using VEP data: ${params.vep_data}"
 
     perl "\$VCF2MAF" \\
-        --input-vcf "${vcf}" \\
-        --output-maf "${vcf.simpleName}.maf" \\
+        --input-vcf "${input_vcf}" \\
+        --output-maf "${input_vcf.simpleName}.maf" \\
         --vep-path "${params.vep_path}" \\
         --vep-data "${params.vep_data}"
     """
 }
 
 workflow {
-    println "params.vcf = ${params.vcf}"
-    vcf_ch = Channel.fromPath(params.vcf, checkIfExists: true)
+    println "params.input_vcf = ${params.input_vcf}"
+    vcf_ch = Channel.fromPath(params.input_vcf, checkIfExists: true)
     VCF2MAF(vcf_ch)
 }

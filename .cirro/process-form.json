@@ -2,7 +2,7 @@
   "form": {
     "type": "object",
     "properties": {
-      "vcf": {
+      "input_vcf": {
         "title": "Input VCF file",
         "description": "Variant Call Format file",
         "type": "string",
@@ -11,7 +11,7 @@
         "file": "**/*"
       }
     },
-    "required": ["vcf"]
+    "required": ["input_vcf"]
   },
   "ui": {}
 }
