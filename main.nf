@@ -39,7 +39,7 @@ process VCF2MAF {
         exit 1
     fi
 
-    perl "$VCF2MAF" \
+    perl "\$VCF2MAF" \
         --input-vcf "${vcf}" \
         --output-maf "${vcf.simpleName}.maf" \
         --vep-path "${params.vep_path}" \
