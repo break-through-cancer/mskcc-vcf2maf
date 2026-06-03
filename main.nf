@@ -39,6 +39,8 @@ process VCF2MAF {
         exit 1
     fi
 
+    echo "Searching for VEP script..."
+    find / -name variant_effect_predictor.pl 2>/dev/null || true
     perl "\$VCF2MAF" \
         --input-vcf "${vcf}" \
         --output-maf "${vcf.simpleName}.maf" \
