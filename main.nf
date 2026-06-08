@@ -97,6 +97,17 @@ workflow {
         error "Missing required parameter: --input_vcf"
     }
 
+    // Step 1: Create the baseline path channel
+    // Step 2: Use .map to transform each file path into a [ sample_id, file_path ] tuple
     vcf_ch = Channel.fromPath(params.input_vcf, checkIfExists: true)
+        .map { vcf_file ->
+            // Extracts the file name without extensions (e.g., "DFCI3-S4-L2.mutectv2.final")
+            def sample_id = vcf_file.simpleName
+            
+            // Return the structured tuple expected by VCF2MAF input
+            return tuple(sample_id, vcf_file)
+        }
+
+    // Pass the properly structured tuple channel into the process
     VCF2MAF(vcf_ch)
 }
