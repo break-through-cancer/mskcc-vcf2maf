@@ -62,18 +62,21 @@ process VCF2MAF {
     script:
     """
     set -euo pipefail
-    
-    echo "[PREPROCESS] Generating hg19 to GRCh37 chromosome mapping file..."
-    for c in {1..22} X Y; do
-        echo "chr\${c} \${c}" >> chr_map.txt
-    done
-    echo "chrM MT" >> chr_map.txt
 
     echo "[PREPROCESS] Stripping 'chr' prefixes from ${vcf}..."
-    # Note: Using bcftools (which is usually bundled or available in genomic containers)
-    # If bcftools is missing in this specific container, we can use a lightweight awk fallback instead.
-    bcftools annotate --rename-chrs chr_map.txt ${vcf} -Oz -o grch37_compatible.vcf.gz
-    bcftools index -t grch37_compatible.vcf.gz
+    if [[ "${vcf}" == *.gz ]]; then
+        gzip -dc "${vcf}"
+    else
+        cat "${vcf}"
+    fi | awk '
+        BEGIN { FS=OFS="\t" }
+        /^#/ { print; next }
+        {
+            gsub(/^chr/, "", \$1)
+            if (\$1 == "M") \$1 = "MT"
+            print
+        }
+    ' > grch37_compatible.vcf
 
     VCF2MAF=\$(find / -name vcf2maf.pl 2>/dev/null | head -n 1)
     
@@ -81,7 +84,7 @@ process VCF2MAF {
     echo "Running annotation on remapped GRCh37 VCF..."
 
     perl "\$VCF2MAF" \
-        --input-vcf "grch37_compatible.vcf.gz" \
+        --input-vcf "grch37_compatible.vcf" \
         --output-maf "${sample_id}.maf" \
         --vep-path "${params.vep_path}" \
         --vep-data "${params.vep_data}" \
