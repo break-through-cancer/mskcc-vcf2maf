@@ -78,15 +78,29 @@ process VCF2MAF {
         }
     ' > grch37_compatible.vcf
 
-    VCF2MAF=\$(find / -name vcf2maf.pl 2>/dev/null | head -n 1)
-    
-    echo "Using vcf2maf: \$VCF2MAF"
-    echo "Running annotation on remapped GRCh37 VCF..."
+    VCF2MAF=$(find / -name vcf2maf.pl 2>/dev/null | head -n 1)
 
-    perl "\$VCF2MAF" \
+    VEP_SCRIPT=$(find / -name variant_effect_predictor.pl 2>/dev/null | head -n 1)
+
+    if [ -z "$VCF2MAF" ]; then
+        echo "ERROR: Could not find vcf2maf.pl"
+        exit 1
+    fi
+
+    if [ -z "$VEP_SCRIPT" ]; then
+        echo "ERROR: Could not find variant_effect_predictor.pl"
+        exit 1
+    fi
+
+    VEP_PATH=$(dirname "$VEP_SCRIPT")
+
+    echo "Using vcf2maf: $VCF2MAF"
+    echo "Using VEP path: $VEP_PATH"
+
+    perl "$VCF2MAF" \
         --input-vcf "grch37_compatible.vcf" \
         --output-maf "${sample_id}.maf" \
-        --vep-path "${params.vep_path}" \
+        --vep-path "$VEP_PATH" \
         --vep-data "${params.vep_data}" \
         --ncbi-build GRCh37
     """
