@@ -97,7 +97,7 @@ process VCF2MAF {
     echo "Using vcf2maf: $VCF2MAF"
     echo "Using VEP path: $VEP_PATH"
 
-    perl "$VCF2MAF" \
+    perl "\$VCF2MAF" \
         --input-vcf "${vcf}" \
         --output-maf "${sample_id}.maf" \
         --vep-path "${params.vep_path}" \
