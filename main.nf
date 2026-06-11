@@ -63,39 +63,11 @@ process VCF2MAF {
     """
     set -euo pipefail
 
-    echo "[PREPROCESS] Stripping 'chr' prefixes from ${vcf}..."
-    if [[ "${vcf}" == *.gz ]]; then
-        gzip -dc "${vcf}"
-    else
-        cat "${vcf}"
-    fi | awk '
-        BEGIN { FS=OFS="\t" }
-        /^#/ { print; next }
-        {
-            gsub(/^chr/, "", \$1)
-            if (\$1 == "M") \$1 = "MT"
-            print
-        }
-    ' > grch37_compatible.vcf
+    VCF2MAF=\$(find / -name vcf2maf.pl 2>/dev/null | head -n 1)
 
-    VCF2MAF=$(find / -name vcf2maf.pl 2>/dev/null | head -n 1)
-
-    VEP_SCRIPT=$(find / -name variant_effect_predictor.pl 2>/dev/null | head -n 1)
-
-    if [ -z "$VCF2MAF" ]; then
-        echo "ERROR: Could not find vcf2maf.pl"
-        exit 1
-    fi
-
-    if [ -z "$VEP_SCRIPT" ]; then
-        echo "ERROR: Could not find variant_effect_predictor.pl"
-        exit 1
-    fi
-
-    VEP_PATH=$(dirname "$VEP_SCRIPT")
-
-    echo "Using vcf2maf: $VCF2MAF"
-    echo "Using VEP path: $VEP_PATH"
+    echo "Using vcf2maf: \$VCF2MAF"
+    echo "Using VEP path: ${params.vep_path}"
+    echo "Using VEP data: ${params.vep_data}"
 
     perl "\$VCF2MAF" \
         --input-vcf "${vcf}" \
