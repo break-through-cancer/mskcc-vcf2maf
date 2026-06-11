@@ -74,7 +74,7 @@ process VCF2MAF {
         --output-maf "${sample_id}.maf" \
         --vep-path "${params.vep_path}" \
         --vep-data "${params.vep_data}" \
-        --ncbi-build GRCh37
+        --ncbi-build GRCh38
     """
 }
 
