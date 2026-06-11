@@ -58,14 +58,51 @@ process VCF2MAF {
 
     output:
     path "${sample_id}.maf"
+    path "${sample_id}.diagnostics.txt"
 
     script:
     """
     set -euo pipefail
 
+    DIAG="${sample_id}.diagnostics.txt"
+
+    echo "===== BASIC INFO =====" > "\$DIAG"
+    echo "PWD: \$(pwd)" >> "\$DIAG"
+    echo "Input VCF: ${vcf}" >> "\$DIAG"
+    echo "Sample ID: ${sample_id}" >> "\$DIAG"
+
+    echo "" >> "\$DIAG"
+    echo "===== TOOL PATHS =====" >> "\$DIAG"
     VCF2MAF=\$(find / -name vcf2maf.pl 2>/dev/null | head -n 1)
+    VEP_SCRIPT=\$(find / -name variant_effect_predictor.pl 2>/dev/null | head -n 1)
+
+    echo "VCF2MAF: \$VCF2MAF" >> "\$DIAG"
+    echo "VEP_SCRIPT: \$VEP_SCRIPT" >> "\$DIAG"
+    echo "PARAM VEP path: ${params.vep_path}" >> "\$DIAG"
+    echo "PARAM VEP data: ${params.vep_data}" >> "\$DIAG"
+
+    echo "" >> "\$DIAG"
+    echo "===== VEP CACHE / DATA =====" >> "\$DIAG"
+    find "${params.vep_data}" -maxdepth 4 -type d 2>/dev/null >> "\$DIAG" || true
+
+    echo "" >> "\$DIAG"
+    echo "===== VCF REFERENCE HEADER =====" >> "\$DIAG"
+    grep "^##reference" "${vcf}" >> "\$DIAG" || true
+    grep "^##contig" "${vcf}" | head -20 >> "\$DIAG" || true
+
+    echo "" >> "\$DIAG"
+    echo "===== FIRST VARIANT CHROMOSOMES =====" >> "\$DIAG"
+    grep -v "^#" "${vcf}" | head -50 | cut -f1 | sort -u >> "\$DIAG" || true
+
+    echo "" >> "\$DIAG"
+    echo "===== FIRST 5 VARIANTS =====" >> "\$DIAG"
+    grep -v "^#" "${vcf}" | head -5 >> "\$DIAG" || true
+
+    echo "" >> "\$DIAG"
+    echo "===== RUNNING VCF2MAF =====" >> "\$DIAG"
 
     echo "Using vcf2maf: \$VCF2MAF"
+    echo "Using VEP script: \$VEP_SCRIPT"
     echo "Using VEP path: ${params.vep_path}"
     echo "Using VEP data: ${params.vep_data}"
 
@@ -77,7 +114,6 @@ process VCF2MAF {
         --ncbi-build GRCh38
     """
 }
-
 workflow {
     println "params.input_vcf = ${params.input_vcf}"
     println params.dump()
