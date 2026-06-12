@@ -57,14 +57,23 @@ process VCF2MAF {
     echo "" >> "\$DIAG"
     echo "===== RUNNING VCF2MAF =====" >> "\$DIAG"
 
-    vcf2maf.pl \
+    cp "\$(which vcf2maf.pl)" ./vcf2maf.no_sift_polyphen.pl
+
+    echo "===== PATCH CHECK BEFORE =====" >> "\$DIAG"
+    grep -n "sift\\|polyphen" ./vcf2maf.no_sift_polyphen.pl >> "\$DIAG" || true
+
+    perl -0pi -e 's/--sift b\\s+//g; s/--polyphen b\\s+//g' ./vcf2maf.no_sift_polyphen.pl
+
+    echo "===== PATCH CHECK AFTER =====" >> "\$DIAG"
+    grep -n "sift\\|polyphen" ./vcf2maf.no_sift_polyphen.pl >> "\$DIAG" || true
+
+    perl ./vcf2maf.no_sift_polyphen.pl \
         --input-vcf "${vcf}" \
         --output-maf "${sample_id}.maf" \
         --ncbi-build GRCh37 \
         --ref-fasta "${params.ref_fasta}" \
         --vep-path "${params.vep_path}" \
-        --vep-data "${params.vep_data}" \
-        --vep-params "--no_sift --no_polyphen"
+        --vep-data "${params.vep_data}"
     """
 }
 
