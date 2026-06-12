@@ -63,7 +63,8 @@ process VCF2MAF {
         --ncbi-build GRCh37 \
         --ref-fasta "${params.ref_fasta}" \
         --vep-path "${params.vep_path}" \
-        --vep-data "${params.vep_data}"
+        --vep-data "${params.vep_data}" \
+        --vep-params "--no_sift --no_polyphen"
     """
 }
 
