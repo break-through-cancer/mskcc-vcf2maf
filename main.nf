@@ -65,7 +65,8 @@ process VCF2MAF {
     echo "" >> "\$DIAG"
     echo "===== RUNNING VCF2MAF =====" >> "\$DIAG"
 
-    vcf2maf.pl \
+
+    perl /usr/local/bin/vcf2maf.pl \
         --input-vcf "${vcf}" \
         --output-maf "${sample_id}.maf" \
         --ncbi-build GRCh37 \
