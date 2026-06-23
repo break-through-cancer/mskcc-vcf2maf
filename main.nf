@@ -65,6 +65,10 @@ process VCF2MAF {
     echo "" >> "\$DIAG"
     echo "===== RUNNING VCF2MAF =====" >> "\$DIAG"
 
+    echo "vcf2maf: \$(command -v vcf2maf.pl || true)" >> "\$DIAG"
+    echo "vep: \$(command -v vep || true)" >> "\$DIAG"
+    ls -lh /usr/local/bin/vcf2maf.pl >> "\$DIAG" || true
+    ls -lh /usr/local/bin/vep >> "\$DIAG" || true
 
     perl /usr/local/bin/vcf2maf.pl \
         --input-vcf "${vcf}" \
